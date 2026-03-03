@@ -61,6 +61,7 @@
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
+    overflow-x: hidden;
 }
 
 body {
@@ -70,6 +71,7 @@ body {
     line-height: 1.6;
     transition: background-color var(--transition), color var(--transition);
     overflow-x: hidden;
+    width: 100%;
 }
 
 h1,
@@ -233,8 +235,22 @@ ul {
 
 @media (max-width: 480px) {
     .brand-name {
-        display: none;
-        /* Hide on very small screens to save space */
+        font-size: 1.15rem;
+    }
+
+    .brand-logo {
+        height: 35px;
+    }
+
+    .floating-actions {
+        right: 1rem;
+        bottom: 1rem;
+    }
+
+    .fab-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
     }
 }
 
@@ -507,7 +523,7 @@ ul {
 /* Services */
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 2.5rem;
 }
 
