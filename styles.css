@@ -1010,6 +1010,45 @@ ul {
     margin-top: 5px;
 }
 
+/* WhatsApp icon link in contact info */
+.whatsapp-icon-link {
+    background: linear-gradient(135deg, #25D366, #128C7E) !important;
+    color: #fff !important;
+}
+
+.whatsapp-icon-link:hover {
+    transform: scale(1.15);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5) !important;
+}
+
+.phone-link {
+    color: var(--color-text-light);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.phone-link:hover {
+    color: #25D366;
+}
+
+/* Footer WhatsApp link */
+.footer-whatsapp-link {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: color var(--transition-fast);
+}
+
+.footer-whatsapp-link:hover {
+    color: #25D366;
+}
+
+.footer-whatsapp-link i {
+    color: #25D366;
+}
+
 .footer-bottom {
     background-color: var(--color-bg);
     padding: 1.5rem 0;
@@ -1156,6 +1195,7 @@ ul {
 .whatsapp-btn {
     background: linear-gradient(135deg, #25D366, #128C7E);
     box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+    color: #fff;
 }
 
 .whatsapp-btn:hover {

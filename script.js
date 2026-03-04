@@ -115,13 +115,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Contact Form Logic ---
+    // --- Contact Form Logic: Send to WhatsApp ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            // Basic UI feedback since there is no backend
-            alert('Thank you for reaching out! We will contact you on WhatsApp shortly.');
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const eventType = document.getElementById('eventType').value;
+            const message = document.getElementById('message').value.trim();
+
+            // Build WhatsApp message with form details
+            const waMessage = `Assalam Alaikum!%0A%0A` +
+                `*Name:* ${encodeURIComponent(name)}%0A` +
+                `*Phone:* ${encodeURIComponent(phone)}%0A` +
+                `*Event Type:* ${encodeURIComponent(eventType)}%0A` +
+                `*Message:* ${encodeURIComponent(message)}`;
+
+            const waUrl = `https://wa.me/923437093906?text=${waMessage}`;
+
+            // Open WhatsApp in a new tab
+            window.open(waUrl, '_blank');
             contactForm.reset();
         });
     }
