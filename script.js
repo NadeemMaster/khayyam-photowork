@@ -59,9 +59,77 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Balanced Masonry Gallery Layout ---
+    const galleryGrid = document.getElementById('galleryGrid');
+    let originalGalleryItems = Array.from(document.querySelectorAll('.gallery-item'));
+
+    // Fisher-Yates Shuffle Function
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Shuffle items once on load
+    shuffleArray(originalGalleryItems);
+
+    function distributeGallery() {
+        if (!galleryGrid) return;
+        
+        const width = window.innerWidth;
+        let numCols = 3;
+        if (width <= 600) numCols = 1;
+        else if (width <= 900) numCols = 2;
+
+        // Clear and create columns
+        galleryGrid.innerHTML = '';
+        const columns = [];
+        const colHeights = [];
+        for (let i = 0; i < numCols; i++) {
+            const col = document.createElement('div');
+            col.className = 'gallery-col';
+            galleryGrid.appendChild(col);
+            columns.push(col);
+            colHeights.push(0); // Track height of each column
+        }
+
+        // Get currently visible items (based on filter)
+        const filterBtn = document.querySelector('.filter-btn.active');
+        const filterValue = filterBtn ? filterBtn.getAttribute('data-filter') : 'all';
+        
+        const visibleItems = originalGalleryItems.filter(item => {
+            return filterValue === 'all' || item.classList.contains(filterValue);
+        });
+
+        // Use Greedy Algorithm for height balancing
+        visibleItems.forEach((item) => {
+            item.style.display = 'block';
+            
+            // Find the shortest column
+            let shortestIndex = 0;
+            let minHeight = colHeights[0];
+            for (let i = 1; i < numCols; i++) {
+                if (colHeights[i] < minHeight) {
+                    minHeight = colHeights[i];
+                    shortestIndex = i;
+                }
+            }
+
+            // Append item to shortest column
+            columns[shortestIndex].appendChild(item);
+            
+            // Estimate height (if not loaded, use a default ratio)
+            // Using offsetHeight is ideal but requires the item to be in DOM
+            // Since we just appended it, we can get a rough height.
+            // If height is 0 (not loaded), we use a placeholder height (say 300)
+            const h = item.getBoundingClientRect().height;
+            colHeights[shortestIndex] += (h > 0 ? h : 400); 
+        });
+    }
+
     // --- Gallery Filtering ---
     const filterBtns = document.querySelectorAll('.filter-btn');
-    const galleryItems = document.querySelectorAll('.gallery-item');
 
     filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -70,19 +138,26 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add active class to clicked button
             btn.classList.add('active');
 
-            const filterValue = btn.getAttribute('data-filter');
-
-            galleryItems.forEach(item => {
-                if (filterValue === 'all' || item.classList.contains(filterValue)) {
-                    item.style.display = 'block'; // Ensure it's part of the flow for masonry
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+            // Re-distribute gallery based on new filter
+            distributeGallery();
             
-            // Refresh AOS specifically when filtering happens so layout triggers properly
-            setTimeout(() => AOS.refresh(), 50);
+            // Refresh AOS specifically when filtering happens
+            setTimeout(() => AOS.refresh(), 100);
         });
+    });
+
+    // Initial distribution
+    window.addEventListener('load', distributeGallery);
+    distributeGallery(); // Run once immediately
+
+    // Re-run after a short delay to account for image loading if 'load' already fired
+    setTimeout(distributeGallery, 1000);
+
+    // Re-distribute on resize (debounced)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(distributeGallery, 100);
     });
 
     // --- Initialize AOS ---
